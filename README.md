@@ -28,13 +28,13 @@ In hóa đơn tự động
 - cd frontend
 - npm install 
 - npm start
-Frontend sẽ chạy tại http://localhost:3000
+- Frontend sẽ chạy tại http://localhost:3000
 
 ### Backend
 - Cần cài sẵn Python 3 + Pip
 - cd backend
 - pip install -r requirements.txt
 - uvicorn app.main:app --reload --port 8000
-Backend API sẽ chạy tại http://localhost:8000
-API documentation có thể xem tại http://localhost:8000/docs
+- Backend API sẽ chạy tại http://localhost:8000
+- API documentation có thể xem tại http://localhost:8000/docs
 
