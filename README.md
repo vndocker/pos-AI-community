@@ -1,4 +1,9 @@
 # POS APP (cloud webapp)
+
+## Version 1
+![Menu](frontend/public/screenshots/frontend-gen-v1.png)
+![Giao diện chính](frontend/public/screenshots/frontend-gen-menu-v1.png)
+
 ## Các tính năng chính:
 
 - Tìm kiếm sản phẩm theo mã hoặc tên
