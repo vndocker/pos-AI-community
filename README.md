@@ -1,8 +1,8 @@
 # POS APP (cloud webapp)
 
 ## Version 1
-![Menu](frontend/public/screenshots/frontend-gen-v1.png)
-![Giao diện chính](frontend/public/screenshots/frontend-gen-menu-v1.png)
+![Menu](frontend/public/screenshots/main-pos-screen.png)
+![Giao diện chính](frontend/public/screenshots/product-screen.png)
 
 ## Các tính năng chính:
 

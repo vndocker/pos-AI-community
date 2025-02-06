@@ -37,7 +37,7 @@ class Invoice(Base):
     total_amount = Column(Float, default=0)
     created_at = Column(DateTime, default=datetime.utcnow)
     
-    items = relationship("InvoiceItem", back_populates="invoice")
+    items = relationship("InvoiceItem", back_populates="invoice", lazy="selectin")
 
 class InvoiceItem(Base):
     __tablename__ = "invoice_items"

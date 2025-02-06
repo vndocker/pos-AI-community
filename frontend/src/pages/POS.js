@@ -75,7 +75,7 @@ export default function POS() {
     };
 
     const calculateTotal = () => {
-        return cart.reduce((sum, item) => sum + item.total_price, 0);
+        return String(cart.reduce((sum, item) => sum + item.total_price, 0));
     };
 
     const handleCheckout = async () => {

@@ -109,7 +109,7 @@ export default function Products() {
             headerName: 'Giá',
             width: 130,
             valueFormatter: (params) => 
-                `${params.value.toLocaleString('vi-VN')} đ`
+                `${String(params).toLocaleString('vi-VN')} đ`
         },
         { field: 'quantity', headerName: 'Tồn kho', width: 130 },
         {

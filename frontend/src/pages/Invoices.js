@@ -65,14 +65,14 @@ export default function Invoices() {
             headerName: 'Ngày tạo',
             width: 200,
             valueFormatter: (params) =>
-                new Date(params.value).toLocaleString('vi-VN')
+                new Date(params).toLocaleString('vi-VN')
         },
         {
             field: 'total_amount',
             headerName: 'Tổng tiền',
             width: 150,
             valueFormatter: (params) =>
-                `${params.value.toLocaleString('vi-VN')} đ`
+                `${params.toLocaleString('vi-VN')} đ`
         },
         {
             field: 'actions',
@@ -159,10 +159,10 @@ export default function Invoices() {
                                                     {item.quantity}
                                                 </TableCell>
                                                 <TableCell align="right">
-                                                    {item.unit_price.toLocaleString('vi-VN')} đ
+                                                    {String(item.unit_price).toLocaleString('vi-VN')} đ
                                                 </TableCell>
                                                 <TableCell align="right">
-                                                    {item.total_price.toLocaleString('vi-VN')} đ
+                                                    {String(item.total_price).toLocaleString('vi-VN')} đ
                                                 </TableCell>
                                             </TableRow>
                                         ))}
@@ -174,7 +174,7 @@ export default function Invoices() {
                                             </TableCell>
                                             <TableCell align="right">
                                                 <Typography variant="subtitle1">
-                                                    {selectedInvoice.total_amount.toLocaleString('vi-VN')} đ
+                                                    {String(selectedInvoice.total_amount).toLocaleString('vi-VN')} đ
                                                 </Typography>
                                             </TableCell>
                                         </TableRow>
