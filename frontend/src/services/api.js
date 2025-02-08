@@ -30,6 +30,11 @@ export const updateProduct = async (id, productData) => {
     return response.data;
 };
 
+export const importProducts = async (products) => {
+    const response = await api.post('/products/bulk', products);
+    return response.data;
+};
+
 // Inventory APIs
 export const createInventoryRecord = async (recordData) => {
     const response = await api.post('/inventory/record', recordData);

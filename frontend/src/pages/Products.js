@@ -10,10 +10,12 @@ import {
     Paper,
     IconButton,
     Typography,
+    Stack,
 } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
-import { Add as AddIcon, Edit as EditIcon } from '@mui/icons-material';
-import { searchProducts, createProduct, updateProduct } from '../services/api';
+import { Add as AddIcon, Edit as EditIcon, CloudUpload } from '@mui/icons-material';
+import { searchProducts, createProduct, updateProduct, importProducts } from '../services/api';
+import ImportProductsModal from '../components/ImportProductsModal';
 
 export default function Products() {
     const [products, setProducts] = useState([]);
@@ -22,6 +24,7 @@ export default function Products() {
     const [page, setPage] = useState(0);
     const [pageSize, setPageSize] = useState(10);
     const [openDialog, setOpenDialog] = useState(false);
+    const [openImportDialog, setOpenImportDialog] = useState(false);
     const [editProduct, setEditProduct] = useState(null);
     const [formData, setFormData] = useState({
         code: '',
@@ -131,13 +134,22 @@ export default function Products() {
         <Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
                 <Typography variant="h5">Quản lý sản phẩm</Typography>
-                <Button
-                    variant="contained"
-                    startIcon={<AddIcon />}
-                    onClick={() => handleOpenDialog()}
-                >
-                    Thêm sản phẩm
-                </Button>
+                <Stack direction="row" spacing={2}>
+                    <Button
+                        variant="outlined"
+                        startIcon={<CloudUpload />}
+                        onClick={() => setOpenImportDialog(true)}
+                    >
+                        Import CSV
+                    </Button>
+                    <Button
+                        variant="contained"
+                        startIcon={<AddIcon />}
+                        onClick={() => handleOpenDialog()}
+                    >
+                        Thêm sản phẩm
+                    </Button>
+                </Stack>
             </Box>
 
             <Paper sx={{ height: 'calc(100vh - 200px)' }}>
@@ -205,6 +217,22 @@ export default function Products() {
                     </DialogActions>
                 </form>
             </Dialog>
+
+            <ImportProductsModal
+                open={openImportDialog}
+                onClose={() => setOpenImportDialog(false)}
+                onImport={async (products) => {
+                    try {
+                        setLoading(true);
+                        await importProducts(products);
+                        loadProducts();
+                    } catch (error) {
+                        console.error('Error importing products:', error);
+                    } finally {
+                        setLoading(false);
+                    }
+                }}
+            />
         </Box>
     );
 }

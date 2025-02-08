@@ -1,11 +1,27 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, or_
-from typing import List
+from typing import List, Dict
 from .. import models, schemas
 from ..database import get_db
 
 router = APIRouter(prefix="/products", tags=["products"])
+
+@router.post("/bulk", response_model=List[schemas.Product])
+async def bulk_create_products(
+    products: List[schemas.ProductCreate],
+    db: AsyncSession = Depends(get_db)
+):
+    db_products = []
+    for product in products:
+        db_product = models.Product(**product.model_dump())
+        db.add(db_product)
+        db_products.append(db_product)
+    
+    await db.commit()
+    for product in db_products:
+        await db.refresh(product)
+    return db_products
 
 @router.post("/", response_model=schemas.Product)
 async def create_product(
