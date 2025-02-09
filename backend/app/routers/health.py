@@ -29,9 +29,6 @@ async def check_database(db: AsyncSession) -> Dict[str, str]:
     responses={
         200: {"description": "Health check successful"},
         503: {"description": "Service unavailable"}
-    },
-    response_headers={
-        "Cache-Control": "no-cache"
     }
 )
 async def health_check(
