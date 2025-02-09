@@ -35,8 +35,8 @@ async def check_database(db: AsyncSession) -> Dict[str, str]:
     }
 )
 async def health_check(
-    db: AsyncSession = Depends(get_db),
-    response: Response = None
+    response: Response,
+    db: AsyncSession = Depends(get_db)
 ):
     """
     Health check endpoint that verifies API and database status.

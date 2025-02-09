@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .database import init_db
-from .routers import products, inventory, invoices
+from .routers import products, inventory, invoices, health
 
 app = FastAPI(title="Simple POS API")
 
@@ -18,7 +18,7 @@ app.add_middleware(
 app.include_router(products.router)
 app.include_router(inventory.router)
 app.include_router(invoices.router)
-# app.include_router(health.router)
+app.include_router(health.router)
 
 @app.on_event("startup")
 async def startup_event():
