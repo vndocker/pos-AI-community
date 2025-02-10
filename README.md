@@ -36,9 +36,14 @@ In hóa đơn tự động
 - Frontend sẽ chạy tại http://localhost:3000
 
 ### Backend
-- Cần cài sẵn Python 3 + Pip
+- Cài đặt uv project manager: https://github.com/astral-sh/uv
+    + On macOS and Linux: curl -LsSf https://astral.sh/uv/install.sh | sh
+    + On Windows: powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 - cd backend
-- pip install -r requirements.txt
+- Install Python: ```uv python install 3.13```
+- Creating virtual environment: ```uv venv --python 3.13.0```
+- Set python version for this folder: ```uv python pin 3.13```
+- uv pip sync requirements_uv.txt
 - uvicorn app.main:app --reload --port 8000
 - Backend API sẽ chạy tại http://localhost:8000
 - API documentation có thể xem tại http://localhost:8000/docs
