@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     Box,
     Grid,
@@ -13,15 +13,40 @@ import {
     TableHead,
     TableRow,
     IconButton,
+    InputAdornment,
 } from '@mui/material';
-import { Delete as DeleteIcon, Print as PrintIcon } from '@mui/icons-material';
+import { 
+    Delete as DeleteIcon, 
+    Print as PrintIcon,
+    PhotoCamera as PhotoCameraIcon 
+} from '@mui/icons-material';
 import { searchProducts, createInvoice } from '../services/api';
+import CameraModal from '../components/CameraModal';
 
 export default function POS() {
     const [searchQuery, setSearchQuery] = useState('');
     const [products, setProducts] = useState([]);
     const [cart, setCart] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [isCameraOpen, setIsCameraOpen] = useState(false);
+    const searchInputRef = useRef(null);
+
+    // Auto-focus search field on mount and F1 key press
+    useEffect(() => {
+        const handleKeyPress = (e) => {
+            if (e.key === 'F1') {
+                e.preventDefault();
+                searchInputRef.current?.focus();
+            }
+        };
+
+        // Focus on mount
+        searchInputRef.current?.focus();
+
+        // Add F1 key listener
+        window.addEventListener('keydown', handleKeyPress);
+        return () => window.removeEventListener('keydown', handleKeyPress);
+    }, []);
 
     const handleSearch = async (query) => {
         setSearchQuery(query);
@@ -30,6 +55,13 @@ export default function POS() {
                 setLoading(true);
                 const response = await searchProducts(query);
                 setProducts(response.items);
+                
+                // If only one product is found, add it to cart automatically
+                if (response.items.length === 1) {
+                    addToCart(response.items[0]);
+                    setSearchQuery(''); // Clear search after adding
+                    searchInputRef.current?.focus(); // Refocus for next scan
+                }
             } catch (error) {
                 console.error('Error searching products:', error);
             } finally {
@@ -38,6 +70,11 @@ export default function POS() {
         } else {
             setProducts([]);
         }
+    };
+
+    const handleBarcodeScanned = (barcode) => {
+        setSearchQuery(barcode);
+        handleSearch(barcode);
     };
 
     const addToCart = (product) => {
@@ -104,10 +141,28 @@ export default function POS() {
                 <Paper sx={{ p: 2, mb: 2 }}>
                     <TextField
                         fullWidth
+                        inputRef={searchInputRef}
                         label="Tìm kiếm sản phẩm (mã hoặc tên)"
                         value={searchQuery}
                         onChange={(e) => handleSearch(e.target.value)}
                         variant="outlined"
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        onClick={() => setIsCameraOpen(true)}
+                                        edge="end"
+                                    >
+                                        <PhotoCameraIcon />
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                        }}
+                    />
+                    <CameraModal
+                        open={isCameraOpen}
+                        onClose={() => setIsCameraOpen(false)}
+                        onScan={handleBarcodeScanned}
                     />
                 </Paper>
                 <Paper sx={{ p: 2, minHeight: '70vh' }}>
