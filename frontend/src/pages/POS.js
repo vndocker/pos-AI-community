@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
     Box,
     Grid,
@@ -30,23 +30,38 @@ export default function POS() {
     const [loading, setLoading] = useState(false);
     const [isCameraOpen, setIsCameraOpen] = useState(false);
     const searchInputRef = useRef(null);
+    const paymentInputRef = useRef(null);
+    const [paymentAmount, setPaymentAmount] = useState(0);
 
-    // Auto-focus search field on mount and F1 key press
+    // Auto-focus search field on mount and handle F1/F2 key presses
     useEffect(() => {
         const handleKeyPress = (e) => {
             if (e.key === 'F1') {
                 e.preventDefault();
                 searchInputRef.current?.focus();
+            } else if (e.key === 'F2') {
+                e.preventDefault();
+                paymentInputRef.current?.focus();
             }
         };
 
         // Focus on mount
         searchInputRef.current?.focus();
 
-        // Add F1 key listener
+        // Add key listeners
         window.addEventListener('keydown', handleKeyPress);
         return () => window.removeEventListener('keydown', handleKeyPress);
     }, []);
+
+    const handlePaymentChange = (value) => {
+        const numericValue = value.replace(/[^0-9]/g, '');
+        setPaymentAmount(numericValue * 1000);
+    };
+
+    const calculateChange = useMemo(() => {
+        const total = cart.reduce((sum, item) => sum + item.total_price, 0);
+        return Math.max(0, paymentAmount - total);
+    }, [cart, paymentAmount]);
 
     const handleSearch = async (query) => {
         setSearchQuery(query);
@@ -112,7 +127,7 @@ export default function POS() {
     };
 
     const calculateTotal = () => {
-        return String(cart.reduce((sum, item) => sum + item.total_price, 0));
+        return cart.reduce((sum, item) => sum + item.total_price, 0);
     };
 
     const handleCheckout = async () => {
@@ -127,8 +142,9 @@ export default function POS() {
             const response = await createInvoice(invoiceData);
             // Open invoice in new window for printing
             const printWindow = window.open(`/invoices/print/${response.id}`, '_blank');
-            // Clear cart after successful checkout
+            // Clear cart and payment after successful checkout
             setCart([]);
+            setPaymentAmount(0);
         } catch (error) {
             console.error('Error creating invoice:', error);
         }
@@ -142,7 +158,7 @@ export default function POS() {
                     <TextField
                         fullWidth
                         inputRef={searchInputRef}
-                        label="Tìm kiếm sản phẩm (mã hoặc tên)"
+                        label="F1 - Tìm kiếm sản phẩm (mã hoặc tên)"
                         value={searchQuery}
                         onChange={(e) => handleSearch(e.target.value)}
                         variant="outlined"
@@ -255,15 +271,35 @@ export default function POS() {
                         </Table>
                     </TableContainer>
                     <Box sx={{ mt: 2, borderTop: 1, borderColor: 'divider', pt: 2 }}>
-                        <Typography variant="h5" align="right" gutterBottom>
+                        <Typography variant="h5" align="right">
                             Tổng cộng: {calculateTotal().toLocaleString('vi-VN')} đ
+                        </Typography>
+                        <TextField
+                            fullWidth
+                            inputRef={paymentInputRef}
+                            label="F2 - Số tiền khách trả"
+                            onChange={(e) => handlePaymentChange(e.target.value)}
+                            sx={{ my: 2 }}
+                            InputProps={{
+                                endAdornment: <InputAdornment position="end">đ</InputAdornment>,
+                            }}
+                        />
+                        <Typography 
+                            variant="h5" 
+                            align="right"
+                            sx={{ 
+                                color: 'success.main',
+                                mb: 2
+                            }}
+                        >
+                            Tiền trả lại: {calculateChange.toLocaleString('vi-VN')} đ
                         </Typography>
                         <Button
                             fullWidth
                             variant="contained"
                             size="large"
                             onClick={handleCheckout}
-                            disabled={cart.length === 0}
+                            disabled={cart.length === 0 || calculateChange < 0}
                             startIcon={<PrintIcon />}
                         >
                             Thanh toán & In hóa đơn
