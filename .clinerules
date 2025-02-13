@@ -1,0 +1,92 @@
+# Project Intelligence
+
+## Project Patterns
+1. **File Organization**
+   - Frontend: Component-based structure in src/components and src/pages
+   - Backend: Router-based organization in app/routers
+   - Memory Bank: Markdown documentation in memory-bank/
+
+2. **Naming Conventions**
+   - React Components: PascalCase (e.g., CameraModal.js)
+   - API Routes: snake_case (e.g., health.py)
+   - Test Files: ComponentName.test.js pattern
+
+3. **Code Style**
+   - Frontend: React functional components with hooks
+   - Backend: FastAPI router-based endpoints
+   - Testing: Component-level test files
+
+## Development Workflow
+1. **Frontend Development**
+   - Material-UI for consistent styling
+   - Component-based architecture
+   - Local state management
+   - Test file per component
+
+2. **Backend Development**
+   - Modular router organization
+   - SQLAlchemy for database operations
+   - Pydantic for data validation
+   - JWT for authentication
+
+3. **Testing Strategy**
+   - Frontend: Jest + React Testing Library
+   - Backend: Python unittest
+   - API: Endpoint testing
+   - Component: Isolation testing
+
+## User Preferences
+1. **Documentation**
+   - Memory Bank for project documentation
+   - Markdown format
+   - Regular updates on changes
+   - Clear status tracking
+
+2. **Development**
+   - Component-first approach
+   - Mobile-responsive design
+   - Offline-first functionality
+   - Performance optimization
+
+## Known Challenges
+1. **Technical**
+   - Camera scanning reliability
+   - Large dataset handling
+   - Mobile responsiveness
+   - Offline sync
+
+2. **Process**
+   - Regular documentation updates
+   - Test coverage maintenance
+   - Performance monitoring
+   - Security considerations
+
+## Tool Usage Patterns
+1. **Frontend**
+   - npm for package management
+   - React Scripts for development
+   - Jest for testing
+   - Material-UI components
+
+2. **Backend**
+   - pip for package management
+   - uvicorn for development server
+   - SQLite for database
+   - FastAPI for API framework
+
+## Project Evolution
+Track significant changes and decisions that shape the project's direction:
+
+1. **Architecture Decisions**
+   - React for frontend
+   - FastAPI for backend
+   - SQLite for database
+   - PWA capabilities
+
+2. **Feature Priorities**
+   - Core POS functionality
+   - Product management
+   - Invoice system
+   - Offline support
+
+This file will be updated as new patterns and preferences are discovered through development.
