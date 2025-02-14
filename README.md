@@ -32,14 +32,15 @@ In hóa đơn tự động
 - Cần cài sẵn NodeJS >18 + npm
 - cd frontend
 - npm install 
-- npm start
+- ```npm start``
 - Frontend sẽ chạy tại http://localhost:3000
 
 ### Backend
 - Cần cài sẵn Python 3.10
 - cd backend
 - pip install -r requirements.txt
-- uvicorn app.main:app --reload --port 8000
+- Start temporal (worfklow): ```temporal server start-dev --db-filename workflow.wdb```
+- ```uvicorn app.main:app --reload --port 8000```
 - Backend API sẽ chạy tại http://localhost:8000
 - API documentation có thể xem tại http://localhost:8000/docs
 

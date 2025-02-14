@@ -1,6 +1,8 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 from typing import List, Optional
 from datetime import datetime
+from enum import Enum
+from uuid import UUID
 
 # Product Schemas
 class ProductBase(BaseModel):
@@ -65,6 +67,44 @@ class Invoice(BaseModel):
     total_amount: float
     created_at: datetime
     items: List[InvoiceItem]
+
+    class Config:
+        from_attributes = True
+
+# Auth Schemas
+class EmailRequest(BaseModel):
+    email: EmailStr
+    turnstile_token: str = Field(..., description="Cloudflare Turnstile token")
+
+class OTPVerifyRequest(BaseModel):
+    email: EmailStr
+    otp: str = Field(..., min_length=6, max_length=6, pattern="^[0-9]{6}$")
+
+class AuthResponse(BaseModel):
+    message: str
+    user_id: Optional[UUID] = None
+
+class OTPStatus(str, Enum):
+    PENDING = "pending"
+    VERIFIED = "verified"
+    EXPIRED = "expired"
+    INVALID = "invalid"
+
+class OTPResponse(BaseModel):
+    status: OTPStatus
+    message: str
+
+# User Schemas
+class UserBase(BaseModel):
+    email: EmailStr
+
+class UserCreate(UserBase):
+    pass
+
+class User(UserBase):
+    id: UUID
+    created_at: datetime
+    last_login: Optional[datetime]
 
     class Config:
         from_attributes = True

@@ -1,7 +1,8 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material';
 import Layout from './components/Layout';
+import SignIn from './pages/SignIn';
 import POS from './pages/POS';
 import Products from './pages/Products';
 import Invoices from './pages/Invoices';
@@ -36,13 +37,20 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <Router>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<POS />} />
-            <Route path="/products" element={<Products />} />
-            <Route path="/invoices" element={<Invoices />} />
-          </Routes>
-        </Layout>
+        <Routes>
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/" element={
+            <Layout>
+              <Routes>
+                <Route path="/" element={<Navigate to="/pos" />} />
+                <Route path="/pos" element={<POS />} />
+                <Route path="/products" element={<Products />} />
+                <Route path="/invoices" element={<Invoices />} />
+              </Routes>
+            </Layout>
+          } />
+          <Route path="*" element={<Navigate to="/signin" />} />
+        </Routes>
       </Router>
     </ThemeProvider>
   );
