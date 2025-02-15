@@ -33,16 +33,25 @@
    - ✅ Basic authentication
    - ⚠️ Advanced security features (in progress)
 
-2. **Endpoints**
+2. **Workflow System**
+   - 🔄 Temporal.io integration
+   - 🔄 Core workflow definitions
+   - 🔄 Activity implementations
+   - 🔄 Worker configuration
+   - 📋 Advanced retry policies
+
+3. **Endpoints**
    - ✅ Health check
    - ✅ Product management
    - ✅ Invoice handling
    - ✅ Inventory tracking
+   - 🔄 Workflow status endpoints
 
-3. **Database**
+4. **Database**
    - ✅ SQLite setup
    - ✅ Basic schemas
    - ⚠️ Migration system (planned)
+   - 🔄 Workflow state persistence
 
 ## Work in Progress
 
@@ -63,15 +72,24 @@
    - 🔄 Integration tests
 
 ### Backend Tasks
-1. **API Enhancements**
+1. **Workflow Implementation**
+   - 🔄 Order processing workflow
+   - 🔄 Inventory management workflow
+   - 🔄 Payment processing workflow
+   - 🔄 Notification workflow
+   - 📋 Multi-step transaction workflows
+
+2. **API Enhancements**
    - 🔄 Rate limiting
    - 🔄 Caching implementation
    - 🔄 Bulk operations
+   - 🔄 Workflow monitoring endpoints
 
-2. **Security**
+3. **Security**
    - 🔄 Role-based access
    - 🔄 Input validation
    - 🔄 Error handling
+   - 🔄 Workflow access control
 
 ## Planned Features
 
@@ -107,13 +125,18 @@
    - Large transaction processing speed
    - Memory usage optimization needed
    - Concurrent access handling
+   - Workflow state management complexity
+   - Activity timeout handling
+   - Retry policy fine-tuning
 
 ## Next Release Goals
 1. Complete offline functionality
-2. Enhance mobile experience
-3. Improve test coverage
-4. Optimize performance
-5. Implement basic user roles
+2. Implement core workflows
+3. Configure Temporal.io worker
+4. Enhance mobile experience
+5. Improve test coverage
+6. Optimize performance
+7. Implement basic user roles
 
 Legend:
 - ✅ Complete

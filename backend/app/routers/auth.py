@@ -62,35 +62,11 @@ async def send_email_activity(email: str, otp: str) -> bool:
         print(f"Email sending failed: {str(e)}")
         return False
 
-@activity.defn
-async def create_user_activity(db: Session, email: str) -> Optional[models.User]:
-    try:
-        user = models.User(email=email)
-        db.add(user)
-        db.commit()
-        db.refresh(user)
-        return user
-    except IntegrityError:
-        db.rollback()
-        return None
-
-@activity.defn
-async def rollback_user_activity(db: Session, user_id: str) -> bool:
-    try:
-        user = db.query(models.User).filter(models.User.id == user_id).first()
-        if user:
-            db.delete(user)
-            db.commit()
-        return True
-    except Exception:
-        db.rollback()
-        return False
-
 # Temporal workflow
 @workflow.defn
 class SignInWorkflow:
     @workflow.run
-    async def run(self, email: str, db: Session) -> schemas.AuthResponse:
+    async def run(self, email: str) -> dict:
         # Step 1: Validate email
         is_valid = await workflow.execute_activity(
             validate_email_activity,
@@ -98,7 +74,7 @@ class SignInWorkflow:
             start_to_close_timeout=timedelta(seconds=5)
         )
         if not is_valid:
-            return schemas.AuthResponse(message="Invalid email format")
+            return {"message": "Invalid email format"}
 
         # Step 2: Generate OTP
         otp = await workflow.execute_activity(
@@ -114,42 +90,12 @@ class SignInWorkflow:
             start_to_close_timeout=timedelta(seconds=30)
         )
         if not email_sent:
-            return schemas.AuthResponse(message="Failed to send OTP email")
+            return {"message": "Failed to send OTP email"}
 
-        # Step 4: Create user (if doesn't exist)
-        user = await workflow.execute_activity(
-            create_user_activity,
-            db,
-            email,
-            start_to_close_timeout=timedelta(seconds=10)
-        )
-        
-        if user is None:
-            return schemas.AuthResponse(message="User already exists")
-
-        try:
-            # Create OTP attempt record
-            otp_attempt = models.OTPAttempt(
-                user_id=user.id,
-                otp=otp,
-                expires_at=datetime.utcnow() + timedelta(minutes=5)
-            )
-            db.add(otp_attempt)
-            db.commit()
-
-            return schemas.AuthResponse(
-                message="OTP sent successfully",
-                user_id=user.id
-            )
-        except Exception as e:
-            # Rollback user creation if OTP record fails
-            await workflow.execute_activity(
-                rollback_user_activity,
-                db,
-                str(user.id),
-                start_to_close_timeout=timedelta(seconds=10)
-            )
-            return schemas.AuthResponse(message="Failed to create OTP record")
+        return {
+            "message": "OTP sent successfully",
+            "otp": otp
+        }
 
 # FastAPI endpoints
 @router.post("/signin/email", response_model=schemas.AuthResponse)
@@ -170,18 +116,49 @@ async def request_otp(
         if not result.get("success"):
             raise HTTPException(status_code=400, message="Invalid Turnstile token")
 
-    # Initialize Temporal client
-    client = await Client.connect("localhost:7233")
-    
-    # Execute workflow
-    result = await client.execute_workflow(
-        SignInWorkflow.run,
-        args=[request.email, db],
-        id=f"signin-{request.email}-{datetime.utcnow().timestamp()}",
-        task_queue="auth-queue"
-    )
-    
-    return result
+    try:
+        # Initialize Temporal client
+        client = await Client.connect("localhost:7233")
+        
+        # Execute workflow
+        result = await client.execute_workflow(
+            SignInWorkflow.run,
+            args=[request.email],
+            id=f"signin-{request.email}-{datetime.utcnow().timestamp()}",
+            task_queue="auth-queue"
+        )
+        
+        if not result.get("otp"):
+            return schemas.AuthResponse(message=result["message"])
+            
+        try:
+            # Create or get user
+            user = db.query(models.User).filter(models.User.email == request.email).first()
+            if not user:
+                user = models.User(email=request.email)
+                db.add(user)
+                db.commit()
+                db.refresh(user)
+            
+            # Create OTP attempt
+            otp_attempt = models.OTPAttempt(
+                user_id=user.id,
+                otp=result["otp"],
+                expires_at=datetime.utcnow() + timedelta(minutes=5)
+            )
+            db.add(otp_attempt)
+            db.commit()
+            
+            return schemas.AuthResponse(
+                message="OTP sent successfully",
+                user_id=user.id
+            )
+        except Exception as e:
+            db.rollback()
+            return schemas.AuthResponse(message="Failed to create OTP record")
+    except Exception as e:
+        print(f"Workflow error: {str(e)}")
+        return schemas.AuthResponse(message="Failed to process sign-in request")
 
 @router.post("/verify/otp", response_model=schemas.OTPResponse)
 async def verify_otp(

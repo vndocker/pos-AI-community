@@ -28,6 +28,7 @@
    - FastAPI 0.104.1
    - Uvicorn 0.24.0 (ASGI server)
    - Python 3.x
+   - Temporal.io (Workflow orchestration)
 
 2. **Database**
    - SQLAlchemy 2.0.25 (ORM)
@@ -38,10 +39,17 @@
    - Pydantic 2.7.4 (Data validation)
    - python-multipart 0.0.6
    - Jinja2 3.1.2 (Template engine)
+   - temporalio (Python SDK)
 
 4. **Security**
    - python-jose 3.3.0 (JWT)
    - passlib 1.7.4 (Password hashing)
+
+5. **Workflow Management**
+   - Temporal Server
+   - Workflow definitions
+   - Activity implementations
+   - Error handling and retries
 
 ## Development Setup
 
@@ -69,6 +77,12 @@ venv\Scripts\activate     # Windows
 
 # Install dependencies
 pip install -r requirements.txt
+
+# Start Temporal server (requires Docker)
+docker run --network host temporalio/temporal:latest
+
+# Run Temporal worker (in a separate terminal)
+python -m app.worker
 
 # Run development server
 uvicorn app.main:app --reload
@@ -109,6 +123,13 @@ uvicorn app.main:app --reload
    - Token-based authentication
    - Input validation
    - CORS configuration
+
+4. **Workflow**
+   - Type-safe workflow definitions
+   - Activity timeout configuration
+   - Retry policies
+   - State persistence
+   - Error handling strategies
 
 ## Dependencies
 All dependencies are managed through:

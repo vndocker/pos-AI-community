@@ -33,11 +33,13 @@ Based on the file structure and open tabs:
    - Testing coverage expansion
 
 2. **Backend**
+   - Temporal.io workflow implementation
    - API endpoint optimization
    - Database operations
    - Invoice template system
 
 3. **Integration**
+   - Workflow orchestration
    - Frontend-backend communication
    - Offline capability implementation
    - Data synchronization
@@ -53,25 +55,42 @@ Based on the file structure and open tabs:
 
 2. **Backend**
    - FastAPI for high-performance API
+   - Temporal.io for workflow orchestration
    - SQLite for local data storage
    - JWT for authentication
    - Modular router organization
+
+3. **Workflow Architecture**
+   - Clearly defined workflow boundaries
+   - Activity-based task decomposition
+   - Strong typing with Python type hints
+   - Comprehensive error handling
+   - Retry policies for resilience
 
 ### Technical Considerations
 1. **Performance**
    - Optimize component rendering
    - Efficient database queries
    - Resource caching strategy
+   - Workflow execution optimization
 
 2. **User Experience**
    - Mobile-first responsive design
    - Intuitive navigation
    - Fast transaction processing
+   - Reliable workflow status tracking
 
 3. **Data Management**
    - Offline data persistence
    - Sync conflict resolution
    - Data validation and integrity
+   - Workflow state persistence
+
+4. **Workflow Management**
+   - Activity timeout configuration
+   - Error handling strategies
+   - State management
+   - Retry policies
 
 ## Next Steps
 
@@ -82,12 +101,15 @@ Based on the file structure and open tabs:
    - Implement offline capabilities
 
 2. **Backend Development**
+   - Implement core workflows
+   - Configure Temporal.io worker
    - Optimize API endpoints
    - Enhance invoice generation
    - Implement data validation
 
 3. **Testing & Documentation**
    - Expand test coverage
+   - Document workflow patterns
    - Update API documentation
    - Document offline workflows
 

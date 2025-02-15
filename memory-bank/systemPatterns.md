@@ -29,10 +29,16 @@ graph TD
 ```mermaid
 graph TD
     Main --> Routers
+    Main --> Workflows
+    Main --> Activities
     Routers --> Health
     Routers --> Inventory
     Routers --> Invoices
     Routers --> Products
+    Workflows --> ProcessOrder
+    Workflows --> HandleInventory
+    Activities --> EmailNotification
+    Activities --> PaymentProcessing
     Main --> Database
     Database --> SQLite
 ```
@@ -42,12 +48,37 @@ graph TD
    - Clear endpoint separation by domain
    - SQLite database integration
 
-2. **Data Flow**
+2. **Temporal.io Workflow Structure**
+   - Organized workflow definitions
+   - Clearly defined activities
+   - Robust error handling and retries
+
+3. **Data Flow**
    - RESTful API endpoints
+   - Workflow-driven business logic
    - JSON request/response format
    - Structured data models and schemas
 
 ## Design Patterns
+
+### Workflow Patterns
+1. **Temporal.io Patterns**
+   - Workflow-Activity separation
+   - Retry policies for reliability
+   - Timeout management
+   - State persistence
+   - Error handling strategies
+
+2. **Naming Conventions**
+   - Workflows: snake_case with _workflow suffix
+   - Activities: snake_case with _activity suffix
+   - Clear, descriptive naming
+
+3. **Code Organization**
+   - /workflows directory for workflow definitions
+   - /activities directory for activity implementations
+   - Separation of concerns between workflows and activities
+   - Reusable activity patterns
 
 ### Frontend Patterns
 1. **Component-Based Architecture**
