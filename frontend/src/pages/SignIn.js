@@ -3,25 +3,29 @@ import { Box, Container, TextField, Button, Typography, Alert } from '@mui/mater
 import { Turnstile } from '@marsidev/react-turnstile';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth } from '../contexts/AuthContext';
 
 const SignIn = () => {
     const navigate = useNavigate();
+    const { login } = useAuth();
     const [email, setEmail] = useState('');
     const [otp, setOtp] = useState('');
     const [turnstileToken, setTurnstileToken] = useState('');
     const [showOtpInput, setShowOtpInput] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleEmailSubmit = async (e) => {
-        e.preventDefault();
+        if (e) e.preventDefault();
         setError('');
         
         if (!turnstileToken) {
-            setError('Vui lòng xác nhận bạn không phải là bot');
+            setError('Hệ thống đang ghi nhận tiến trình Robot, vui lòng thử lại!');
             return;
         }
 
+        setIsLoading(true);
         try {
             const response = await axios.post('http://localhost:8000/auth/signin/email', {
                 email,
@@ -36,6 +40,8 @@ const SignIn = () => {
             }
         } catch (err) {
             setError(err.response?.data?.detail || 'Failed to send OTP');
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -51,10 +57,8 @@ const SignIn = () => {
 
             if (response.data.status === 'verified') {
                 setSuccess('Sign in successful!');
-                // Add token handling here if needed
-                setTimeout(() => {
-                    navigate('/pos');
-                }, 1500);
+                login();
+                navigate('/pos');
             } else {
                 setError(response.data.message);
             }
@@ -107,7 +111,9 @@ const SignIn = () => {
                         <Box sx={{ my: 2, display: 'flex', justifyContent: 'center' }}>
                             <Turnstile
                                 siteKey={process.env.REACT_APP_TURNSTILE_SITE_KEY}
-                                onSuccess={setTurnstileToken}
+                                onSuccess={(token) => {
+                                    setTurnstileToken(token);
+                                }}
                             />
                         </Box>
 
@@ -116,8 +122,10 @@ const SignIn = () => {
                             fullWidth
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
+                            loading={isLoading}
+                            disabled={isLoading}
                         >
-                            Send OTP
+                            Get OTP
                         </Button>
                     </Box>
                 ) : (

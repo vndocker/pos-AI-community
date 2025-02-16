@@ -115,7 +115,7 @@ async def verify_turnstile_activity(token: str) -> bool:
     try:
         import httpx
         
-        TURNSTILE_SECRET = os.getenv("TURNSTILE_SECRET")
+        TURNSTILE_SECRET = os.getenv("TURNSTILE_SECRET", "0x4AAAAAAA8q3OrddWDlZRslFB7_kLgO0bU")
         TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify"
         
         async with httpx.AsyncClient() as client:
