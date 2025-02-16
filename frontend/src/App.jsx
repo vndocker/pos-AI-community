@@ -6,8 +6,7 @@ import SignIn from './pages/SignIn';
 import POS from './pages/POS';
 import Products from './pages/Products';
 import Invoices from './pages/Invoices';
-import { AuthProvider } from './contexts/AuthContext';
-import ProtectedRoute from './components/ProtectedRoute';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 // Create theme
 const theme = createTheme({
@@ -35,28 +34,38 @@ const theme = createTheme({
   },
 });
 
+function PrivateRoute({ children }) {
+  const { isAuthenticated } = useAuth();
+  return isAuthenticated ? children : <Navigate to="/signin" />;
+}
+
+function PublicRoute({ children }) {
+  const { isAuthenticated } = useAuth();
+  return isAuthenticated ? <Navigate to="/pos" /> : children;
+}
+
 function App() {
   return (
     <ThemeProvider theme={theme}>
       <AuthProvider>
         <Router>
           <Routes>
-            <Route path="/signin" element={<SignIn />} />
-            <Route path="/" element={
-              <Layout>
-                <Routes>
-                  <Route path="/" element={<Navigate to="/pos" />} />
-                  <Route path="/pos" element={
-                    <ProtectedRoute>
-                      <POS />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/products" element={<Products />} />
-                  <Route path="/invoices" element={<Invoices />} />
-                </Routes>
-              </Layout>
+            <Route path="/signin" element={
+              <PublicRoute>
+                <SignIn />
+              </PublicRoute>
             } />
-            <Route path="*" element={<Navigate to="/signin" />} />
+            
+            <Route path="/" element={
+              <PrivateRoute>
+                <Layout />
+              </PrivateRoute>
+            }>
+              <Route index element={<Navigate to="/pos" />} />
+              <Route path="pos" element={<POS />} />
+              <Route path="products" element={<Products />} />
+              <Route path="invoices" element={<Invoices />} />
+            </Route>
           </Routes>
         </Router>
       </AuthProvider>

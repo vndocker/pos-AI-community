@@ -21,7 +21,7 @@ const SignIn = () => {
         setError('');
         
         if (!turnstileToken) {
-            setError('Hệ thống đang ghi nhận tiến trình Robot, vui lòng thử lại!');
+            setError('Hệ thống đang ghi nhận bạn đang thực hiện quá nhanh hoặc tiến trình Robot, vui lòng thử lại!');
             return;
         }
 
@@ -110,7 +110,7 @@ const SignIn = () => {
                         
                         <Box sx={{ my: 2, display: 'flex', justifyContent: 'center' }}>
                             <Turnstile
-                                siteKey={process.env.REACT_APP_TURNSTILE_SITE_KEY}
+                                siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
                                 onSuccess={(token) => {
                                     setTurnstileToken(token);
                                 }}

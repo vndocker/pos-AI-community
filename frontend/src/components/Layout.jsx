@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, AppBar, Toolbar, Typography, Container, IconButton, Drawer, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
-import { Menu as MenuIcon, ShoppingCart, Inventory, Receipt, Dashboard } from '@mui/icons-material';
-import { Link, useLocation } from 'react-router-dom';
+import { Menu as MenuIcon, ShoppingCart, Inventory, Receipt } from '@mui/icons-material';
+import { Link, useLocation, Outlet } from 'react-router-dom';
 
 const menuItems = [
     { text: 'Bán hàng', icon: <ShoppingCart />, path: '/' },
@@ -9,7 +9,7 @@ const menuItems = [
     { text: 'Hóa đơn', icon: <Receipt />, path: '/invoices' },
 ];
 
-export default function Layout({ children }) {
+export default function Layout() {
     const [drawerOpen, setDrawerOpen] = React.useState(false);
     const location = useLocation();
 
@@ -73,7 +73,7 @@ export default function Layout({ children }) {
                 }}
             >
                 <Container maxWidth="lg">
-                    {children}
+                    <Outlet />
                 </Container>
             </Box>
         </Box>
