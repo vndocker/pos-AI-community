@@ -141,7 +141,7 @@ export default function POS() {
             };
             const response = await createInvoice(invoiceData);
             // Open invoice in new window for printing
-            const printWindow = window.open(`/invoices/print/${response.id}`, '_blank');
+            const printWindow = window.open(`${import.meta.env.VITE_API_URL}/invoices/print/${response.id}`, '_blank');
             // Clear cart and payment after successful checkout
             setCart([]);
             setPaymentAmount(0);

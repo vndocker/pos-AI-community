@@ -55,7 +55,7 @@ export default function Invoices() {
     };
 
     const handlePrintInvoice = (invoiceId) => {
-        window.open(`/invoices/print/${invoiceId}`, '_blank');
+        window.open(`${import.meta.env.VITE_API_URL}/invoices/print/${invoiceId}`, '_blank');
     };
 
     const columns = [
