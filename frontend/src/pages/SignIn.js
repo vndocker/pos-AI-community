@@ -18,7 +18,7 @@ const SignIn = () => {
         setError('');
         
         if (!turnstileToken) {
-            setError('Please complete the Turnstile challenge');
+            setError('Vui lòng xác nhận bạn không phải là bot');
             return;
         }
 

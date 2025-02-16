@@ -4,12 +4,6 @@ from typing import Dict, Optional
 
 from temporalio import workflow
 from temporalio.common import RetryPolicy
-from ..activities.auth_activities import (
-    validate_email_activity,
-    generate_otp_activity,
-    send_email_activity,
-    verify_turnstile_activity
-)
 
 @workflow.defn
 class SignInWorkflow:
@@ -23,7 +17,7 @@ class SignInWorkflow:
     """
 
     @workflow.run
-    async def run(self, email: str, turnstile_token: str) -> Dict[str, str]:
+    async def run(self, email: str, turnstile_token: str) -> dict:
         """
         Execute the sign-in workflow.
 
@@ -36,60 +30,33 @@ class SignInWorkflow:
         """
         # Step 1: Verify Turnstile token
         is_verified = await workflow.execute_activity(
-            verify_turnstile_activity,
+            "verify_turnstile_activity",
             turnstile_token,
-            start_to_close_timeout=timedelta(seconds=10),
-            retry_policy=RetryPolicy(
-                initial_interval=timedelta(seconds=1),
-                maximum_interval=timedelta(seconds=5),
-                maximum_attempts=3,
-                non_retryable_error_types=["ValueError"]
-            )
+            start_to_close_timeout=timedelta(seconds=10)
         )
         if not is_verified:
             return {"message": "Invalid Turnstile token"}
 
         # Step 2: Validate email
         is_valid = await workflow.execute_activity(
-            validate_email_activity,
+            "validate_email_activity",
             email,
-            start_to_close_timeout=timedelta(seconds=5),
-            retry_policy=RetryPolicy(
-                initial_interval=timedelta(seconds=1),
-                maximum_interval=timedelta(seconds=3),
-                maximum_attempts=2,
-                non_retryable_error_types=["ValueError"]
-            )
+            start_to_close_timeout=timedelta(seconds=5)
         )
         if not is_valid:
             return {"message": "Invalid email format"}
 
         # Step 3: Generate OTP
-        try:
-            otp = await workflow.execute_activity(
-                generate_otp_activity,
-                start_to_close_timeout=timedelta(seconds=5),
-                retry_policy=RetryPolicy(
-                    initial_interval=timedelta(seconds=1),
-                    maximum_interval=timedelta(seconds=3),
-                    maximum_attempts=2
-                )
-            )
-        except Exception as e:
-            workflow.logger.error(f"OTP generation failed: {str(e)}")
-            return {"message": "Failed to generate OTP"}
+        otp = await workflow.execute_activity(
+            "generate_otp_activity",
+            start_to_close_timeout=timedelta(seconds=5)
+        )
 
         # Step 4: Send email
         email_sent = await workflow.execute_activity(
-            send_email_activity,
+            "send_email_activity",
             args=[email, otp],
-            start_to_close_timeout=timedelta(seconds=30),
-            retry_policy=RetryPolicy(
-                initial_interval=timedelta(seconds=2),
-                maximum_interval=timedelta(seconds=10),
-                maximum_attempts=3,
-                non_retryable_error_types=["ValueError"]
-            )
+            start_to_close_timeout=timedelta(seconds=30)
         )
         if not email_sent:
             return {"message": "Failed to send OTP email"}

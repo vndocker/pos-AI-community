@@ -39,8 +39,10 @@ In hóa đơn tự động
 - Cần cài sẵn Python 3.10
 - cd backend
 - pip install -r requirements.txt
-- Start temporal (worfklow): ```temporal server start-dev --db-filename workflow.wdb```
+- Start temporal (worfklow): 
+- ```temporal server start-dev```
 - ```uvicorn app.main:app --reload --port 8000```
+-- ```python -m app.run_worker```
 - Backend API sẽ chạy tại http://localhost:8000
 - API documentation có thể xem tại http://localhost:8000/docs
 
