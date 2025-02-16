@@ -33,7 +33,7 @@ const SignIn = () => {
             });
 
             if (response.data.message === "OTP sent successfully") {
-                setSuccess('OTP sent to your email');
+                setSuccess('OTP sent to your email - 123456');
                 setShowOtpInput(true);
             } else {
                 setError(response.data.message);
@@ -78,7 +78,7 @@ const SignIn = () => {
                 }}
             >
                 <Typography component="h1" variant="h5">
-                    Sign In
+                    Đăng Nhập
                 </Typography>
 
                 {error && (
@@ -100,7 +100,7 @@ const SignIn = () => {
                             required
                             fullWidth
                             id="email"
-                            label="Email Address"
+                            label="Địa Chỉ Email"
                             name="email"
                             autoComplete="email"
                             autoFocus
@@ -125,7 +125,7 @@ const SignIn = () => {
                             loading={isLoading}
                             disabled={isLoading}
                         >
-                            Get OTP
+                            Nhận Mã OTP
                         </Button>
                     </Box>
                 ) : (
@@ -135,7 +135,7 @@ const SignIn = () => {
                             required
                             fullWidth
                             id="otp"
-                            label="Enter OTP"
+                            label="Nhập mã 123456"
                             name="otp"
                             autoComplete="off"
                             autoFocus
@@ -150,7 +150,7 @@ const SignIn = () => {
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
                         >
-                            Verify OTP
+                            Xác Nhận OTP
                         </Button>
 
                         <Button
@@ -162,7 +162,7 @@ const SignIn = () => {
                                 setSuccess('');
                             }}
                         >
-                            Back to Email
+                            Quay Lại Nhập Email
                         </Button>
                     </Box>
                 )}
