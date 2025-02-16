@@ -2,6 +2,7 @@
 import asyncio
 from temporalio.client import Client
 from temporalio.worker import Worker
+import os
 
 from app.workflows.auth_workflow import SignInWorkflow, VerifyOTPWorkflow
 from app.activities.auth_activities import (
@@ -12,7 +13,7 @@ from app.activities.auth_activities import (
 )
 
 async def main() -> None:
-    client: Client = await Client.connect("localhost:7233", namespace="default")
+    client: Client = await Client.connect(os.getenv("ORCHESTRATOR_URL", "localhost:7233"), namespace="default")
     # Run the worker
     worker = Worker(
             client,

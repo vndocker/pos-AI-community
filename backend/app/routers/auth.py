@@ -2,6 +2,7 @@
 from datetime import datetime, timedelta
 from typing import Optional
 import traceback
+import os
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -31,7 +32,7 @@ async def request_otp(
     """
     try:
         # Initialize Temporal client
-        client = await Client.connect("localhost:7233")
+        client = await Client.connect(os.getenv("ORCHESTRATOR_URL", "localhost:7233"))
         
         # Execute sign-in workflow
         workflow_result = await client.execute_workflow(
