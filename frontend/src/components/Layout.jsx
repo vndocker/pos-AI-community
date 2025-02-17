@@ -1,7 +1,12 @@
 import React from 'react';
-import { Box, AppBar, Toolbar, Typography, Container, IconButton, Drawer, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import { Box, AppBar, Toolbar, Typography, Button, Container, IconButton, Drawer, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import { Menu as MenuIcon, ShoppingCart, Inventory, Receipt } from '@mui/icons-material';
 import { Link, useLocation, Outlet } from 'react-router-dom';
+import { useState } from 'react';
+import { useAuth } from '../contexts/AuthContext';
+import UserAvatar from './UserAvatar';
+import ProfileModal from './ProfileModal';
+
 
 const menuItems = [
     { text: 'Bán hàng', icon: <ShoppingCart />, path: '/' },
@@ -12,6 +17,8 @@ const menuItems = [
 export default function Layout() {
     const [drawerOpen, setDrawerOpen] = React.useState(false);
     const location = useLocation();
+    const { user } = useAuth();
+    const [profileOpen, setProfileOpen] = useState(false);
 
     const toggleDrawer = () => {
         setDrawerOpen(!drawerOpen);
@@ -38,7 +45,7 @@ export default function Layout() {
     );
 
     return (
-        <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+        <Box sx={{ display: 'flex', minHeight: '100vh', flexGrow: 1 }}>
             <AppBar position="fixed">
                 <Toolbar>
                     <IconButton
@@ -50,9 +57,19 @@ export default function Layout() {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <Typography variant="h6" noWrap component="div">
+                    <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
                         Simple POS
                     </Typography>
+                    <Box>
+                    {user && (
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                             <UserAvatar onProfileClick={() => setProfileOpen(true)} />
+                            <Typography variant="body1" sx={{ mr: 2 }}>
+                                {user.username || user.email}
+                            </Typography>
+                        </Box>
+                )}
+                    </Box>
                 </Toolbar>
             </AppBar>
             <Drawer
@@ -75,7 +92,13 @@ export default function Layout() {
                 <Container maxWidth="lg">
                     <Outlet />
                 </Container>
+                
             </Box>
+  
+            <ProfileModal
+                open={profileOpen}
+                onClose={() => setProfileOpen(false)}
+            />
         </Box>
     );
 }

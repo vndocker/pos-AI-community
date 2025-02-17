@@ -127,3 +127,26 @@ class InventoryResponse(BaseModel):
 class InvoiceResponse(BaseModel):
     total: int
     items: List[Invoice]
+
+class UserProfile(BaseModel):
+    id: UUID
+    email: EmailStr
+    username: str
+    avatar_url: str
+    created_at: datetime
+    last_login: datetime
+
+class UserProfileUpdate(BaseModel):
+    username: str
+
+class AvatarResponse(BaseModel):
+    """Schema for avatar presigned URL response."""
+    upload_url: str
+    download_url: Optional[str] = None
+
+class AvatarConfirm(BaseModel):
+    """Schema for confirming avatar upload."""
+    object_key: str
+
+    class Config:
+        from_attributes = True

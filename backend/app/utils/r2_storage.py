@@ -1,0 +1,93 @@
+"""Cloudflare R2 storage utilities."""
+import os
+import boto3
+from botocore.config import Config
+from datetime import datetime, timedelta
+
+class R2Storage:
+    def __init__(self):
+        self.access_key = os.getenv("R2_ACCESS_KEY_ID")
+        self.secret_key = os.getenv("R2_SECRET_ACCESS_KEY")
+        self.endpoint = os.getenv("R2_ENDPOINT")
+        self.bucket_name = os.getenv("R2_BUCKET_NAME", "pos-ai")
+        
+        # Configure S3 client for R2
+        self.s3_client = boto3.client(
+            "s3",
+            aws_access_key_id=self.access_key,
+            aws_secret_access_key=self.secret_key,
+            endpoint_url=self.endpoint,
+            config=Config(signature_version="s3v4"),
+            region_name="auto"  # R2 uses 'auto' region
+        )
+
+    def generate_presigned_url(self, object_key: str, expiration: int = 3600) -> dict:
+        """Generate presigned URLs for upload and download.
+        
+        Args:
+            object_key: The key (path) where the object will be stored
+            expiration: URL expiration time in seconds (default 1 hour)
+            
+        Returns:
+            dict: Contains presigned URLs for upload and download
+        """
+        try:
+            # Generate upload URL
+            upload_url = self.s3_client.generate_presigned_url(
+                "put_object",
+                Params={
+                    "Bucket": self.bucket_name,
+                    "Key": object_key,
+                    "ContentType": "image/*",
+                    "ContentLength": 500 * 1024,  # 500KB limit
+                },
+                ExpiresIn=expiration,
+            )
+            
+            # Generate download URL
+            download_url = self.s3_client.generate_presigned_url(
+                "get_object",
+                Params={
+                    "Bucket": self.bucket_name,
+                    "Key": object_key,
+                },
+                ExpiresIn=expiration,
+            )
+            
+            return {
+                "upload_url": upload_url,
+                "download_url": download_url,
+                "object_key": object_key
+            }
+        except Exception as e:
+            raise Exception(f"Error generating presigned URL: {str(e)}")
+
+    def delete_object(self, object_key: str) -> bool:
+        """Delete an object from R2 storage.
+        
+        Args:
+            object_key: The key (path) of the object to delete
+            
+        Returns:
+            bool: True if deletion was successful
+        """
+        try:
+            self.s3_client.delete_object(
+                Bucket=self.bucket_name,
+                Key=object_key
+            )
+            return True
+        except Exception as e:
+            raise Exception(f"Error deleting object: {str(e)}")
+
+    def generate_avatar_key(self, user_id: str) -> str:
+        """Generate a unique key for user avatar.
+        
+        Args:
+            user_id: The user's ID
+            
+        Returns:
+            str: Generated object key
+        """
+        timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+        return f"avatars/{user_id}/{timestamp}.jpg"

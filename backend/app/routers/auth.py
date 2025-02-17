@@ -3,8 +3,9 @@ from datetime import datetime, timedelta
 from typing import Optional
 import traceback
 import os
+import uuid
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from temporalio.client import Client
@@ -12,8 +13,126 @@ from temporalio.client import Client
 from .. import models, schemas
 from ..database import get_db
 from ..workflows.auth_workflow import SignInWorkflow, VerifyOTPWorkflow
+from ..utils.r2_storage import R2Storage
+
+r2_storage = R2Storage()
 
 router = APIRouter(prefix="/auth", tags=["auth"])
+
+async def get_current_user(
+    request: Request,
+    db: AsyncSession = Depends(get_db)
+) -> models.User:
+    """Get current authenticated user."""
+    # For now, we'll use the email from request headers
+    # TODO: Implement proper JWT authentication
+    # email = request.headers.get("X-User-Email")
+    email = "fake@g.com"
+    if not email:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    stmt = select(models.User).where(models.User.email == email)
+    result = await db.execute(stmt)
+    user = result.scalar_one_or_none()
+    
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    return user
+
+@router.get("/profile", response_model=schemas.UserProfile)
+async def get_profile(
+    current_user: models.User = Depends(get_current_user)
+) -> schemas.UserProfile:
+    """Get current user's profile."""
+    return schemas.UserProfile(
+        id=current_user.id,
+        email=current_user.email,
+        username=current_user.username,
+        avatar_url=current_user.avatar_url,
+        created_at=current_user.created_at,
+        last_login=current_user.last_login
+    )
+
+@router.put("/profile", response_model=schemas.UserProfile)
+async def update_profile(
+    profile: schemas.UserProfileUpdate,
+    current_user: models.User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+) -> schemas.UserProfile:
+    """Update current user's profile."""
+    try:
+        if profile.username is not None:
+            current_user.username = profile.username
+        await db.commit()
+        await db.refresh(current_user)
+        
+        return schemas.UserProfile(
+            id=current_user.id,
+            email=current_user.email,
+            username=current_user.username,
+            avatar_url=current_user.avatar_url,
+            created_at=current_user.created_at,
+            last_login=current_user.last_login
+        )
+    except Exception as e:
+        await db.rollback()
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to update profile: {str(e)}"
+        )
+
+@router.post("/avatar/presigned", response_model=schemas.AvatarResponse)
+async def get_avatar_presigned_url(
+    current_user: models.User = Depends(get_current_user)
+) -> schemas.AvatarResponse:
+    """Get presigned URLs for avatar upload."""
+    try:
+        object_key = r2_storage.generate_avatar_key(current_user.id)
+        urls = r2_storage.generate_presigned_url(object_key)
+        return schemas.AvatarResponse(**urls)
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to generate presigned URL: {str(e)}"
+        )
+
+@router.post("/avatar/confirm", response_model=schemas.UserProfile)
+async def confirm_avatar_upload(
+    confirm: schemas.AvatarConfirm,
+    current_user: models.User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+) -> schemas.UserProfile:
+    """Confirm avatar upload and update user profile."""
+    try:
+        # Delete old avatar if exists
+        if current_user.avatar_url:
+            old_key = current_user.avatar_url.split("/")[-2:]
+            old_key = f"avatars/{'/'.join(old_key)}"
+            try:
+                r2_storage.delete_object(old_key)
+            except Exception as e:
+                print(f"Failed to delete old avatar: {str(e)}")
+        
+        # Update user's avatar URL
+        current_user.avatar_url = f"{r2_storage.endpoint}/{r2_storage.bucket_name}/{confirm.object_key}"
+        await db.commit()
+        await db.refresh(current_user)
+        
+        return schemas.UserProfile(
+            id=current_user.id,
+            email=current_user.email,
+            username=current_user.username,
+            avatar_url=current_user.avatar_url,
+            created_at=current_user.created_at,
+            last_login=current_user.last_login
+        )
+    except Exception as e:
+        await db.rollback()
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to confirm avatar upload: {str(e)}"
+        )
 
 @router.post("/signin/email", response_model=schemas.AuthResponse)
 async def request_otp(
