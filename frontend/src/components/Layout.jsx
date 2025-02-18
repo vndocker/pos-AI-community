@@ -58,7 +58,7 @@ export default function Layout() {
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-                        Simple POS
+                        POS - AI App
                     </Typography>
                     <Box>
                     {user && (

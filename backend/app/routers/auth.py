@@ -27,7 +27,7 @@ async def get_current_user(
     # For now, we'll use the email from request headers
     # TODO: Implement proper JWT authentication
     # email = request.headers.get("X-User-Email")
-    email = "fake@g.com"
+    email = "zeddy502@gmail.com"
     if not email:
         raise HTTPException(status_code=401, detail="Not authenticated")
     

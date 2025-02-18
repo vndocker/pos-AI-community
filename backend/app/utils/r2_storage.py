@@ -6,9 +6,9 @@ from datetime import datetime, timedelta
 
 class R2Storage:
     def __init__(self):
-        self.access_key = os.getenv("R2_ACCESS_KEY_ID")
-        self.secret_key = os.getenv("R2_SECRET_ACCESS_KEY")
-        self.endpoint = os.getenv("R2_ENDPOINT")
+        self.access_key = os.getenv("R2_ACCESS_KEY_ID", "862b2b07ce0b8548776a8ad7c2d2ad19")
+        self.secret_key = os.getenv("R2_SECRET_ACCESS_KEY", "32a945cb6b20512ee337bf732b98d40760cb7be7572873bba8def05f31fa897b")
+        self.endpoint = os.getenv("R2_ENDPOINT", "https://d75d0978428e12467185290c27919b53.r2.cloudflarestorage.com")
         self.bucket_name = os.getenv("R2_BUCKET_NAME", "pos-ai")
         
         # Configure S3 client for R2

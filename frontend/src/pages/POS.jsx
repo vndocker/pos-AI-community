@@ -47,6 +47,7 @@ export default function POS() {
 
         // Focus on mount
         searchInputRef.current?.focus();
+        searchProducts('').then(r =>  setProducts(r.items));
 
         // Add key listeners
         window.addEventListener('keydown', handleKeyPress);
@@ -71,12 +72,12 @@ export default function POS() {
                 const response = await searchProducts(query);
                 setProducts(response.items);
                 
-                // If only one product is found, add it to cart automatically
-                if (response.items.length === 1) {
-                    addToCart(response.items[0]);
-                    setSearchQuery(''); // Clear search after adding
-                    searchInputRef.current?.focus(); // Refocus for next scan
-                }
+                // // If only one product is found, add it to cart automatically
+                // if (response.items.length === 1) {
+                //     addToCart(response.items[0]);
+                //     setSearchQuery(''); // Clear search after adding
+                //     searchInputRef.current?.focus(); // Refocus for next scan
+                // }
             } catch (error) {
                 console.error('Error searching products:', error);
             } finally {
@@ -277,6 +278,7 @@ export default function POS() {
                         <TextField
                             fullWidth
                             inputRef={paymentInputRef}
+                            required
                             label="F2 - Số tiền khách trả"
                             onChange={(e) => handlePaymentChange(e.target.value)}
                             sx={{ my: 2 }}

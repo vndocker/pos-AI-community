@@ -7,7 +7,7 @@ import { useAuth } from '../contexts/AuthContext';
 
 const SignIn = () => {
     const navigate = useNavigate();
-    const { login } = useAuth();
+    const { login, updateUser } = useAuth();
     const [email, setEmail] = useState('');
     const [otp, setOtp] = useState('');
     const [turnstileToken, setTurnstileToken] = useState('');
@@ -19,30 +19,34 @@ const SignIn = () => {
     const handleEmailSubmit = async (e) => {
         if (e) e.preventDefault();
         setError('');
+
+        login();
+        updateUser({ username: 'bang' })
+        navigate('/pos');
         
-        if (!turnstileToken) {
-            setError('Hệ thống đang ghi nhận bạn đang thực hiện quá nhanh hoặc tiến trình Robot, vui lòng thử lại!');
-            return;
-        }
+        // if (!turnstileToken) {
+        //     setError('Hệ thống đang ghi nhận bạn đang thực hiện quá nhanh hoặc tiến trình Robot, vui lòng thử lại!');
+        //     return;
+        // }
 
-        setIsLoading(true);
-        try {
-            const response = await axios.post('http://localhost:8000/auth/signin/email', {
-                email,
-                turnstile_token: turnstileToken
-            });
+        // setIsLoading(true);
+        // try {
+        //     const response = await axios.post('http://localhost:8000/auth/signin/email', {
+        //         email,
+        //         turnstile_token: turnstileToken
+        //     });
 
-            if (response.data.message === "OTP sent successfully") {
-                setSuccess('OTP sent to your email - 123456');
-                setShowOtpInput(true);
-            } else {
-                setError(response.data.message);
-            }
-        } catch (err) {
-            setError(err.response?.data?.detail || 'Failed to send OTP');
-        } finally {
-            setIsLoading(false);
-        }
+        //     if (response.data.message === "OTP sent successfully") {
+        //         setSuccess('OTP sent to your email - 123456');
+        //         setShowOtpInput(true);
+        //     } else {
+        //         setError(response.data.message);
+        //     }
+        // } catch (err) {
+        //     setError(err.response?.data?.detail || 'Failed to send OTP');
+        // } finally {
+        //     setIsLoading(false);
+        // }
     };
 
     const handleOtpSubmit = async (e) => {
