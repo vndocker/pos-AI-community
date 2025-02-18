@@ -34,31 +34,30 @@ const ProfileModal = ({ open, onClose }) => {
     };
 
     const handleUpload = async () => {
-        try {
-            // Get presigned URL
-            const { data: { upload_url, object_key } } = await api.post('/auth/avatar/presigned');
-            
-            // Upload to R2
-            await fetch(upload_url, {
-                method: 'PUT',
-                body: file,
-                headers: {
-                    'Content-Type': file.type,
-                },
-            });
-            
-            // Confirm upload
-            const { data: profile } = await api.post('/auth/avatar/confirm', {
-                object_key
-            });
-            
-            // Update user context
-            updateUser(profile);
-            setFile(null);
-            
-        } catch (err) {
-            setError('Failed to upload avatar: ' + err.message);
+        // Get presigned URL
+        const { data: { upload_url, object_key } } = await api.post('/auth/avatar/presigned');
+        
+        // Upload to R2
+        const response = await fetch(upload_url, {
+            method: 'PUT',
+            body: file,
+            headers: {
+                'Content-Type': file.type,
+            },
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to upload avatar');
         }
+        
+        // Confirm upload
+        const { data: profile } = await api.post('/auth/avatar/confirm', {
+            object_key
+        });
+        
+        // Update user context
+        updateUser(profile);
+        setFile(null);
     };
 
     const handleSave = async () => {
@@ -66,9 +65,16 @@ const ProfileModal = ({ open, onClose }) => {
         setError('');
         
         try {
+            let success = true;
+            
             // Upload file if selected
             if (file) {
-                await handleUpload();
+                try {
+                    await handleUpload();
+                } catch (err) {
+                    success = false;
+                    throw err;
+                }
             }
             
             // Update profile if username changed
@@ -79,7 +85,9 @@ const ProfileModal = ({ open, onClose }) => {
                 updateUser(profile);
             }
             
-            onClose();
+            if (success) {
+                onClose();
+            }
         } catch (err) {
             setError('Failed to update profile: ' + err.message);
         } finally {
