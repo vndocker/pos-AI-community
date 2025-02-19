@@ -33,22 +33,34 @@ const ProfileModal = ({ open, onClose }) => {
         }
     };
 
+    const uploadFile = async (file, uploadUrl) => {
+        try {
+            const response = await fetch(uploadUrl, {
+                method: 'PUT',
+                body: file,
+                headers: {
+                    'Content-Type': file.type,
+                },
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error('Upload failed');
+            }
+            
+            return response;
+        } catch (error) {
+            console.error('Error uploading file:', error);
+            throw error;
+        }
+    };
+
     const handleUpload = async () => {
         // Get presigned URL
         const { data: { upload_url, object_key } } = await api.post('/auth/avatar/presigned');
         
         // Upload to R2
-        const response = await fetch(upload_url, {
-            method: 'PUT',
-            body: file,
-            headers: {
-                'Content-Type': file.type,
-            },
-        });
-        
-        if (!response.ok) {
-            throw new Error('Failed to upload avatar');
-        }
+        const response = await uploadFile(file, upload_url);
         
         // Confirm upload
         const { data: profile } = await api.post('/auth/avatar/confirm', {

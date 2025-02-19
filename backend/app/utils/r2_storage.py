@@ -30,7 +30,13 @@ class R2Storage:
             
         Returns:
             dict: Contains presigned URLs for upload and download
+            
+        Raises:
+            Exception: If object_key is invalid or empty
         """
+        if not object_key:
+            raise Exception("Object key cannot be empty or None")
+            
         try:
             # Generate upload URL
             upload_url = self.s3_client.generate_presigned_url(
@@ -70,7 +76,13 @@ class R2Storage:
             
         Returns:
             bool: True if deletion was successful
+            
+        Raises:
+            Exception: If object_key is invalid or empty
         """
+        if not object_key:
+            raise Exception("Object key cannot be empty or None")
+            
         try:
             self.s3_client.delete_object(
                 Bucket=self.bucket_name,
@@ -88,6 +100,12 @@ class R2Storage:
             
         Returns:
             str: Generated object key
+            
+        Raises:
+            Exception: If user_id is invalid or empty
         """
+        if not user_id:
+            raise Exception("User ID cannot be empty or None")
+            
         timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
         return f"avatars/{user_id}/{timestamp}.jpg"
