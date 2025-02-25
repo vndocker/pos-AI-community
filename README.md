@@ -1,5 +1,8 @@
-# POS APP (cloud webapp)
 
+# POS APP (cloud webapp)
+## Cộng đồng - Hỗ trợ tài khoản, giải đáp thắc mắc, báo lỗi, thông báo mới
+ [![Nhóm Zalo](frontend/public/socials/zalo.png)](https://zalo.me/g/xstozy028)
+ 
 ## Version 1
 ![Menu](frontend/public/screenshots/main-pos-screen.png)
 ![Giao diện chính](frontend/public/screenshots/product-screen.png)
