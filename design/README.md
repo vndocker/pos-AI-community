@@ -4,6 +4,15 @@ This directory contains comprehensive design documentation for the POS (Point of
 
 ## Documentation Structure
 
+### Product Requirements Documents
+- [AI-Enhanced POS System](PRDs/1.AI-enhanced-POS-system.md)
+  - AI feature roadmap
+  - Implementation approach
+  - Success metrics
+  - Rollout plan
+
+### Architecture Documentation
+
 1. [System Architecture](01_system_architecture.md)
    - High-level system overview
    - Data flow patterns

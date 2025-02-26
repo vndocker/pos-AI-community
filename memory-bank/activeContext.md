@@ -2,6 +2,15 @@
 
 ## Current Development Focus
 
+### New PRD Development
+- Created PRD for AI-Enhanced POS System (design/PRDs/1.AI-enhanced-POS-system.md)
+- Focused on AI features for small retail store owners
+- Planned gradual rollout with Rapid MVP approach (3-4 months)
+- Prioritized Product Recognition, Smart Inventory Management, and Customer Experience features
+- Designed with AI Assistant interface and microservices architecture
+- Comprehensive analytics approach for data collection
+
+
 ### Active Components
 1. **Point of Sale (POS)**
    - Main transaction interface
