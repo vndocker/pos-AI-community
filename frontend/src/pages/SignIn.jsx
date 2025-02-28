@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, Container, TextField, Button, Typography, Alert } from '@mui/material';
 import { Turnstile } from '@marsidev/react-turnstile';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 
 const SignIn = () => {
@@ -19,7 +19,7 @@ const SignIn = () => {
     const handleEmailSubmit = async (e) => {
         if (e) e.preventDefault();
         setError('');
-        
+
         if (!turnstileToken) {
             setError('Hệ thống đang ghi nhận bạn đang thực hiện quá nhanh hoặc tiến trình Robot, vui lòng thử lại!');
             return;
@@ -27,7 +27,7 @@ const SignIn = () => {
 
         setIsLoading(true);
         try {
-            const response = await axios.post('http://localhost:8000/auth/signin/email', {
+            const response = await api.post('/auth/signin/email', {
                 email,
                 turnstile_token: turnstileToken
             });
@@ -50,7 +50,7 @@ const SignIn = () => {
         setError('');
 
         try {
-            const response = await axios.post('http://localhost:8000/auth/verify/otp', {
+            const response = await api.post('/auth/verify/otp', {
                 email,
                 otp
             });
