@@ -13,7 +13,12 @@ from app.activities.auth_activities import (
 )
 
 async def main() -> None:
-    client: Client = await Client.connect(os.getenv("ORCHESTRATOR_URL", "localhost:7233"), namespace="default")
+    client: Client = await Client.connect(
+        target_host=os.getenv("ORCHESTRATOR_URL", "localhost:7233"),
+        api_key=os.getenv("ORCHESTRATOR_API_KEY", ""),
+        tls=True,
+        namespace=os.getenv("ORCHESTRATOR_NAMESPACE", "")
+    )
     # Run the worker
     worker = Worker(
             client,

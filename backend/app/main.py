@@ -43,7 +43,8 @@ async def init_temporal_worker():
         client = await Client.connect(
             target_host=os.getenv("ORCHESTRATOR_URL", "localhost:7233"),
             api_key=os.getenv("ORCHESTRATOR_API_KEY", ""),
-            tls=True
+            tls=True,
+            namespace=os.getenv("ORCHESTRATOR_NAMESPACE", "")
         )
         worker = Worker(
                 client,
