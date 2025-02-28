@@ -40,7 +40,11 @@ app.include_router(auth.router)
 async def init_temporal_worker():    
     """Initialize and run the Temporal worker with authentication workflows."""
     try:
-        client = await Client.connect(os.getenv("ORCHESTRATOR_URL", "localhost:7233"))
+        client = await Client.connect(
+            target_host=os.getenv("ORCHESTRATOR_URL", "localhost:7233"),
+            api_key=os.getenv("ORCHESTRATOR_API_KEY", ""),
+            tls=True
+        )
         worker = Worker(
                 client,
                 task_queue="auth-queue",
