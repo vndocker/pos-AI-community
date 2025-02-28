@@ -7,8 +7,8 @@
 
 ## AI Agent Todo list
 ### Phase 1
-[] Setup Frontend layout (mobile laptop responsive)
-[] POS main screen
-[] Product management (import/export) - no image
+[x] Setup Frontend layout (mobile laptop responsive)
+[x] POS main screen
+[x] Product management (import/export) - no image
 [] Payment evidence
 [] E-Invoice
