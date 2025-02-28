@@ -17,7 +17,7 @@ async def main() -> None:
         target_host=os.getenv("ORCHESTRATOR_URL", "localhost:7233"),
         api_key=os.getenv("ORCHESTRATOR_API_KEY", ""),
         tls=True,
-        namespace=os.getenv("ORCHESTRATOR_NAMESPACE", "")
+        namespace="pos.inedr"
     )
     # Run the worker
     worker = Worker(
