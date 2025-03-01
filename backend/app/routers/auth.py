@@ -242,7 +242,12 @@ async def verify_otp(
 
     try:
         # Initialize Temporal client
-        client = await Client.connect("localhost:7233")
+        client = await Client.connect(
+            target_host=os.getenv("ORCHESTRATOR_URL", "localhost:7233"),
+            api_key=os.getenv("ORCHESTRATOR_API_KEY", ""),
+            tls=True,
+            namespace="pos.inedr"
+        )
         
         # Execute verification workflow
         workflow_result = await client.execute_workflow(
