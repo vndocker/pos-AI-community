@@ -19,6 +19,7 @@ const SignIn = () => {
     const handleEmailSubmit = async (e) => {
         if (e) e.preventDefault();
         setError('');
+        
 
         if (!turnstileToken) {
             setError('Hệ thống đang ghi nhận bạn đang thực hiện quá nhanh hoặc tiến trình Robot, vui lòng thử lại!');
@@ -48,6 +49,12 @@ const SignIn = () => {
     const handleOtpSubmit = async (e) => {
         e.preventDefault();
         setError('');
+
+        // Validate OTP length before submitting
+        if (otp.length !== 6) {
+            setError('OTP phải có đúng 6 ký tự');
+            return;
+        }
 
         try {
             const response = await api.post('/auth/verify/otp', {
