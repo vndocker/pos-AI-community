@@ -16,8 +16,8 @@ email_conf = ConnectionConfig(
     MAIL_PORT=int(os.getenv("MAIL_PORT", "2525")),
     MAIL_SERVER=os.getenv("MAIL_SERVER", "sandbox.smtp.mailtrap.io"),
     MAIL_STARTTLS=True,
-    MAIL_SSL_TLS=False,
-    USE_CREDENTIALS=True
+    MAIL_SSL_TLS=True,
+    USE_CREDENTIALS=False
 )
 
 @activity.defn

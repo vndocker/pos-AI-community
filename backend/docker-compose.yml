@@ -18,6 +18,11 @@ services:
       - ORCHESTRATOR_URL=ap-southeast-1.aws.api.temporal.io:7233
       - ORCHESTRATOR_API_KEY=eyJ
       - ORCHESTRATOR_NAMESPACE=pos.inedr
+      - MAIL_USERNAME=
+      - MAIL_PASSWORD=
+      - MAIL_FROM=
+      - MAIL_PORT=
+      - MAIL_SERVER=
     networks:
       - temporal-network
     build:
