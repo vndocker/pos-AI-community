@@ -34,7 +34,7 @@ const SignIn = () => {
             });
 
             if (response.data.message === "OTP sent successfully") {
-                setSuccess('OTP sent to your email - 123456');
+                setSuccess('OTP sent to your email');
                 setShowOtpInput(true);
             } else {
                 setError(response.data.message);
@@ -142,7 +142,7 @@ const SignIn = () => {
                             required
                             fullWidth
                             id="otp"
-                            label="Nhập mã 123456"
+                            label="Nhập mã"
                             name="otp"
                             autoComplete="off"
                             autoFocus
