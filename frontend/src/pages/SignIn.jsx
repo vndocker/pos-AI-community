@@ -19,6 +19,7 @@ const SignIn = () => {
     const handleEmailSubmit = async (e) => {
         if (e) e.preventDefault();
         setError('');
+        
 
         if (!turnstileToken) {
             setError('Hệ thống đang ghi nhận bạn đang thực hiện quá nhanh hoặc tiến trình Robot, vui lòng thử lại!');
@@ -33,7 +34,7 @@ const SignIn = () => {
             });
 
             if (response.data.message === "OTP sent successfully") {
-                setSuccess('OTP sent to your email - 123456');
+                setSuccess('OTP sent to your email');
                 setShowOtpInput(true);
             } else {
                 setError(response.data.message);
@@ -48,6 +49,12 @@ const SignIn = () => {
     const handleOtpSubmit = async (e) => {
         e.preventDefault();
         setError('');
+
+        // Validate OTP length before submitting
+        if (otp.length !== 6) {
+            setError('OTP phải có đúng 6 ký tự');
+            return;
+        }
 
         try {
             const response = await api.post('/auth/verify/otp', {
@@ -135,7 +142,7 @@ const SignIn = () => {
                             required
                             fullWidth
                             id="otp"
-                            label="Nhập mã 123456"
+                            label="Nhập mã"
                             name="otp"
                             autoComplete="off"
                             autoFocus

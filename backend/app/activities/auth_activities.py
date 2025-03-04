@@ -12,7 +12,7 @@ import os
 email_conf = ConnectionConfig(
     MAIL_USERNAME=os.getenv("MAIL_USERNAME", "5ba47113c06e1a"),
     MAIL_PASSWORD=os.getenv("MAIL_PASSWORD", "384f0582383c70"),
-    MAIL_FROM=os.getenv("MAIL_FROM", "pos@lifeapp.ai"),
+    MAIL_FROM=os.getenv("MAIL_FROM", "hotro_pos@pandev00.com"),
     MAIL_PORT=int(os.getenv("MAIL_PORT", "2525")),
     MAIL_SERVER=os.getenv("MAIL_SERVER", "sandbox.smtp.mailtrap.io"),
     MAIL_STARTTLS=True,
@@ -57,8 +57,7 @@ async def generate_otp_activity() -> str:
     """
     try:
         # Generate 6-digit OTP using cryptographically secure random choices
-        # otp = ''.join(random.choices(string.digits, k=6))
-        otp = "123456"
+        otp = ''.join(random.choices(string.digits, k=6))
         activity.logger.info("OTP generated successfully")
         return otp
     except Exception as e:

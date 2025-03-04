@@ -1,4 +1,4 @@
-version: "3.5"
+version: "3.7"
 services:
   mysql:
     container_name: temporal-mysql
@@ -13,8 +13,11 @@ services:
       - /var/lib/mysql
   backend:
     container_name: backend
+    restart: always
     environment:
-      - ORCHESTRATOR_URL=temporal:7233
+      - ORCHESTRATOR_URL=ap-southeast-1.aws.api.temporal.io:7233
+      - ORCHESTRATOR_API_KEY=eyJ
+      - ORCHESTRATOR_NAMESPACE=pos.inedr
     networks:
       - temporal-network
     build:
