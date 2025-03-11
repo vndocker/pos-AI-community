@@ -17,13 +17,15 @@ class SignInWorkflow:
     """
 
     @workflow.run
-    async def run(self, email: str, turnstile_token: str) -> dict:
+    async def run(self, email: str, turnstile_token: str, use_smtp: bool = False, smtp_provider: str = "default") -> dict:
         """
         Execute the sign-in workflow.
 
         Args:
             email: User's email address
             turnstile_token: Cloudflare Turnstile token for verification
+            use_smtp: Whether to use SMTP for sending email (True) or FastMail (False)
+            smtp_provider: SMTP provider to use ('default', 'mailtrap', or 'bizflycloud')
 
         Returns:
             Dict containing workflow result message and OTP if successful
@@ -52,12 +54,20 @@ class SignInWorkflow:
             start_to_close_timeout=timedelta(seconds=5)
         )
 
-        # Step 4: Send email
-        email_sent = await workflow.execute_activity(
-            "send_email_activity",
-            args=[email, otp],
-            start_to_close_timeout=timedelta(seconds=30)
-        )
+        # Step 4: Send email (using either SMTP or FastMail)
+        if use_smtp:
+            email_sent = await workflow.execute_activity(
+                "send_email_smtp_activity",
+                args=[email, otp, smtp_provider],
+                start_to_close_timeout=timedelta(seconds=30)
+            )
+        else:
+            email_sent = await workflow.execute_activity(
+                "send_email_activity",
+                args=[email, otp],
+                start_to_close_timeout=timedelta(seconds=30)
+            )
+            
         if not email_sent:
             return {"message": "Failed to send OTP email"}
 

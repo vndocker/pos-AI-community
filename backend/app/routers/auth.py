@@ -143,7 +143,7 @@ async def request_otp(
     Request OTP for sign-in.
     
     Args:
-        request: Email request containing email and Turnstile token
+        request: Email request containing email, Turnstile token, and optional SMTP configuration
         db: Database session
         
     Returns:
@@ -158,10 +158,10 @@ async def request_otp(
             namespace="pos.inedr"
         )
         
-        # Execute sign-in workflow
+        # Execute sign-in workflow with SMTP options
         workflow_result = await client.execute_workflow(
             SignInWorkflow.run,
-            args=[request.email, request.turnstile_token],
+            args=[request.email, request.turnstile_token, request.use_smtp, 'bizflycloud'],
             id=f"signin-{request.email}-{datetime.utcnow().timestamp()}",
             task_queue="auth-queue"
         )

@@ -75,6 +75,8 @@ class Invoice(BaseModel):
 class EmailRequest(BaseModel):
     email: EmailStr
     turnstile_token: str = Field(..., description="Cloudflare Turnstile token")
+    use_smtp: bool = Field(default=False, description="Whether to use SMTP for sending email")
+    smtp_provider: Optional[str] = Field(default="default", description="SMTP provider to use ('default', 'mailtrap', or 'bizflycloud')")
 
 class OTPVerifyRequest(BaseModel):
     email: EmailStr
