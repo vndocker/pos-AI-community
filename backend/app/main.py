@@ -12,7 +12,8 @@ from .activities.auth_activities import (
     validate_email_activity,
     generate_otp_activity,
     send_email_activity,
-    verify_turnstile_activity
+    verify_turnstile_activity,
+    send_email_smtp_activity
 )
 
 
@@ -54,7 +55,8 @@ async def init_temporal_worker():
                     validate_email_activity,
                     generate_otp_activity,
                     send_email_activity,
-                    verify_turnstile_activity
+                    verify_turnstile_activity,
+                    send_email_smtp_activity
                 ]
             )
         print("Temporal worker initialized successfully")
