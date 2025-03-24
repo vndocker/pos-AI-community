@@ -1,4 +1,0 @@
-- Build POS web cloud app have  PWA ready that can  work  offline.
-- Simple to use, elegant UI, better UX to new user
-- Compatible with mobile, tablet and pc screen
-- Backend that should organize and operation by workflow temporal
