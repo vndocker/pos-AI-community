@@ -24,6 +24,7 @@ and creating customized learning paths, we help engineers bridge the gap between
 - Báo cáo cần ngắn gọn, cô đọng và mang tính quyết định nhanh, realtime
 - Tích hợp ting ting mặc định, không phí ẩn
 - Miễn phí cho 1000 sản phẩm đầu tiên, trọn đời, không chi phí cài đặt, đào tạo hay thiết bị, có thể sử dụng ngay điện thoại và máy tính có sẵn
+- Sản phẩm White-label, có thể mua bản quyền toàn vẹn để sử dụng nội bộ hoặc phát triển chuỗi quản lý riêng
 
 Technical interviews in the software industry are complex, requiring deep preparation across multiple dimensions:
 algorithmic problem-solving, system design, behavioral questions, and specific technology expertise. 
